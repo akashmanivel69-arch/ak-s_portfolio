@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Write — Akash M</title>
+<link rel="stylesheet" href="css/style.css"/>
+<style>
+  :root{--red:#e05555;}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--font-mono);font-size:14px;line-height:1.7;min-height:100vh;overflow-x:hidden;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,200,150,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,150,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;height:56px;padding:0 32px;display:flex;align-items:center;justify-content:space-between;background:rgba(8,12,16,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
+  .nav-logo{font-size:13px;color:var(--green);letter-spacing:0.05em;text-decoration:none;}
+  .nav-logo span{color:var(--text2);}
+  .nav-link{font-size:11px;color:var(--text2);text-decoration:none;letter-spacing:0.08em;transition:color 0.2s;}
+  .nav-link:hover{color:var(--green);}
+  .writer-wrap{max-width:1060px;margin:0 auto;padding:76px 28px 60px;display:grid;grid-template-columns:1fr 360px;gap:28px;align-items:start;position:relative;z-index:1;}
+  @media(max-width:820px){.writer-wrap{grid-template-columns:1fr;}.sidebar{order:-1;}}
+  .page-label{font-size:10px;letter-spacing:0.2em;color:var(--accent);margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+  .page-label::after{content:'';width:40px;height:1px;background:var(--border2);}
+  .field{margin-bottom:18px;}
+  .field-label{font-size:11px;color:var(--text2);letter-spacing:0.1em;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;}
+  .field-hint{font-size:10px;color:var(--text3);}
+  input[type=text],select,textarea{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:var(--font-mono);font-size:13px;padding:11px 14px;outline:none;transition:border-color 0.2s;appearance:none;}
+  input[type=text]:focus,select:focus,textarea:focus{border-color:var(--accent);}
+  input[type=text]::placeholder,textarea::placeholder{color:var(--text3);}
+  textarea{resize:vertical;line-height:1.8;}
+  select option{background:var(--surface);}
+  .tag-grid{display:flex;flex-wrap:wrap;gap:7px;}
+  .tag-btn{font-size:11px;letter-spacing:0.07em;padding:4px 13px;border:1px solid var(--border);color:var(--text2);background:transparent;cursor:pointer;font-family:var(--font-mono);transition:all 0.15s;}
+  .tag-btn.on{border-color:var(--accent);color:var(--accent);background:var(--green-dim);}
+  .toolbar{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px;}
+  .tool{font-size:11px;padding:4px 10px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);cursor:pointer;font-family:var(--font-mono);transition:all 0.15s;}
+  .tool:hover{border-color:var(--border2);color:var(--text);}
+  .dest-btn{font-family:var(--font-mono);font-size:12px;letter-spacing:0.1em;padding:10px 28px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:all 0.15s;flex:1;text-align:center;}
+  .dest-btn:first-child{border-right:none;}
+  .dest-btn.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700;}
+  .btn-publish{width:100%;padding:14px;background:var(--accent);color:#000;font-family:var(--font-mono);font-size:13px;font-weight:700;letter-spacing:0.12em;border:none;cursor:pointer;margin-top:20px;transition:background 0.2s,transform 0.15s;}
+  .btn-publish:hover{background:#4dcf9a;transform:translateY(-1px);}
+  .btn-publish:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+  .read-time{font-size:10px;padding:2px 8px;background:var(--green-dim);border:1px solid var(--border2);color:var(--accent);}
+  .sidebar{position:sticky;top:68px;}
+  .sidebar-box{background:var(--surface);border:1px solid var(--border);padding:20px;margin-bottom:16px;}
+  .sidebar-label{font-size:10px;letter-spacing:0.15em;color:var(--accent);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+  .prev-meta{font-size:10px;color:var(--text3);margin-bottom:8px;}
+  .prev-title{font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--text);line-height:1.3;margin-bottom:8px;}
+  .prev-excerpt{font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:10px;}
+  .prev-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;}
+  .prev-tag{font-size:10px;padding:2px 7px;border:1px solid var(--border);color:var(--green);}
+  .prev-divider{height:1px;background:var(--border);margin:12px 0;}
+  .prev-body{font-size:12px;color:var(--text2);line-height:1.7;max-height:220px;overflow-y:auto;}
+  .prev-body h2{font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--text);margin:12px 0 6px;}
+  .prev-body p{margin-bottom:8px;}
+  .prev-body strong{color:var(--accent);}
+  .prev-body pre{background:var(--bg);border:1px solid var(--border);padding:10px;font-size:11px;color:var(--green);margin-bottom:8px;overflow-x:auto;}
+  .prev-body blockquote{border-left:2px solid var(--accent);padding:6px 12px;background:var(--bg);margin:8px 0;font-style:italic;}
+  .prev-body ul{padding-left:16px;margin-bottom:8px;}
+  .prev-body li::marker{color:var(--green);}
+  .prev-body img{max-width:100%;border:1px solid var(--border);margin:8px 0;display:block;}
+  .prev-empty{color:var(--text3);font-size:12px;text-align:center;padding:20px 0;}
+  .saved-item{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);gap:8px;}
+  .saved-item:last-child{border-bottom:none;}
+  .saved-title{font-size:12px;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .del-btn{font-size:10px;padding:2px 8px;border:1px solid rgba(224,85,85,0.3);color:var(--red);background:transparent;cursor:pointer;font-family:var(--font-mono);flex-shrink:0;}
+  .del-btn:hover{background:rgba(224,85,85,0.1);}
+  .no-posts{font-size:12px;color:var(--text3);text-align:center;padding:12px 0;}
+  .img-drop-zone{border:1px dashed var(--border2);padding:18px;text-align:center;cursor:pointer;margin-top:10px;}
+  .img-drop-zone:hover{border-color:var(--accent);background:var(--green-dim);}
+  .img-drop-zone p{font-size:12px;color:var(--text2);margin-bottom:6px;}
+  .img-drop-zone span{font-size:10px;color:var(--text3);}
+  .img-thumb-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+  .img-thumb{position:relative;width:72px;}
+  .img-thumb img{width:100%;height:72px;object-fit:cover;border:1px solid var(--border);display:block;}
+  .img-thumb-btn{position:absolute;top:2px;right:2px;width:18px;height:18px;background:var(--red);color:#fff;border:none;font-size:10px;cursor:pointer;}
+  .img-insert-btn{font-size:10px;padding:2px 7px;border:1px solid var(--border2);color:var(--accent);background:transparent;cursor:pointer;font-family:var(--font-mono);margin-top:4px;width:100%;}
+  .toast{display:none;position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;font-family:var(--font-mono);font-size:12px;font-weight:700;letter-spacing:0.1em;padding:11px 26px;z-index:9998;white-space:nowrap;}
+  .toast.err{background:var(--red);color:#fff;}
+  /* PASSWORD OVERLAY */
+  #pw-overlay{display:flex;position:fixed;inset:0;background:#080c10;z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
+  #pw-overlay input{width:260px;text-align:center;letter-spacing:0.2em;padding:12px 16px;}
+  #pw-overlay .pw-btn{padding:11px 32px;background:var(--accent);color:#000;font-family:var(--font-mono);font-size:12px;font-weight:700;letter-spacing:0.12em;border:none;cursor:pointer;width:260px;}
+  #pw-overlay .pw-btn:hover{background:#4dcf9a;}
+  #pw-err{font-size:11px;color:var(--red);display:none;}
+</style>
+</head>
+<body>
+
+<!-- PASSWORD OVERLAY -->
+<div id="pw-overlay">
+  <div style="font-size:13px;color:var(--accent);letter-spacing:0.15em;">&lt;AKASH M/&gt; WRITER</div>
+  <div style="font-size:11px;color:var(--text2);letter-spacing:0.1em;">ENTER PASSWORD</div>
+  <input type="password" id="pw-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPw()"/>
+  <button class="pw-btn" onclick="checkPw()">ENTER →</button>
+  <div id="pw-err">Incorrect password. Try again.</div>
+</div>
+
+<nav>
+  <a href="index.html" class="nav-logo"><span>&lt;</span>AKASH <span style="color:#3EB489">M</span><span>/&gt;</span></a>
+  <ul style="display:flex;gap:24px;list-style:none;">
+    <li><a href="index.html" class="nav-link">home</a></li>
+    <li><a href="blog.html" class="nav-link">blog</a></li>
+    <li><a href="project.html" class="nav-link">projects</a></li>
+  </ul>
+</nav>
+
+<div class="writer-wrap">
+  <div>
+    <div class="page-label">WRITE NEW POST</div>
+    <div class="field">
+      <div class="field-label">TITLE <span class="field-hint">Make it specific</span></div>
+      <input type="text" id="f-title" placeholder="e.g. Why Random Forest beat XGBoost on my dataset" oninput="livePreview()"/>
+    </div>
+    <div class="field">
+      <div class="field-label">PUBLISH TO</div>
+      <div style="display:flex;">
+        <button id="dest-blog" class="dest-btn active" onclick="setDest('blog')">Blog</button>
+        <button id="dest-project" class="dest-btn" onclick="setDest('project')">Projects</button>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">CATEGORY</div>
+      <select id="f-cat" onchange="livePreview()">
+        <option>Python</option><option>SQL</option>
+        <option selected>Machine Learning</option>
+        <option>Deep Learning</option><option>Data Science</option>
+        <option>AI Trends</option><option>Generative AI</option><option>Tools</option>
+      </select>
+    </div>
+    <div class="field">
+      <div class="field-label">TAGS</div>
+      <div class="tag-grid">
+        <button class="tag-btn on" onclick="toggleTag(this,'Python')">Python</button>
+        <button class="tag-btn" onclick="toggleTag(this,'SQL')">SQL</button>
+        <button class="tag-btn" onclick="toggleTag(this,'AI')">AI</button>
+        <button class="tag-btn" onclick="toggleTag(this,'ML')">ML</button>
+        <button class="tag-btn" onclick="toggleTag(this,'DL')">DL</button>
+        <button class="tag-btn" onclick="toggleTag(this,'DS')">DS</button>
+        <button class="tag-btn" onclick="toggleTag(this,'AI Trends')">AI Trends</button>
+        <button class="tag-btn" onclick="toggleTag(this,'Gen AI')">Gen AI</button>
+        <button class="tag-btn" onclick="toggleTag(this,'TensorFlow')">TensorFlow</button>
+        <button class="tag-btn" onclick="toggleTag(this,'PyTorch')">PyTorch</button>
+        <button class="tag-btn" onclick="toggleTag(this,'Scikit-learn')">Scikit-learn</button>
+        <button class="tag-btn" onclick="toggleTag(this,'Pandas')">Pandas</button>
+        <button class="tag-btn" onclick="toggleTag(this,'NumPy')">NumPy</button>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">SHORT SUMMARY <span class="field-hint" id="exc-len">0/160</span></div>
+      <textarea id="f-excerpt" rows="3" placeholder="1-2 sentences shown on the card." oninput="livePreview();countLen()"></textarea>
+    </div>
+    <div class="field">
+      <div class="field-label">CONTENT <span class="read-time" id="read-time">0 min</span></div>
+      <div class="toolbar">
+        <button class="tool" onclick="ins('## ','')">H2</button>
+        <button class="tool" onclick="ins('### ','')">H3</button>
+        <button class="tool" onclick="ins('**','**')">Bold</button>
+        <button class="tool" onclick="ins('\n```\n','\n```\n')">Code</button>
+        <button class="tool" onclick="ins('> ','')">Quote</button>
+        <button class="tool" onclick="ins('- ','')">List</button>
+        <button class="tool" onclick="ins('\n---\n','')">Line</button>
+        <button class="tool" style="color:var(--accent)" onclick="document.getElementById('img-picker').click()">Image</button>
+      </div>
+      <input type="file" id="img-picker" accept="image/*" multiple style="display:none" onchange="handleImageUpload(this)"/>
+      <textarea id="f-content" rows="20" placeholder="Write your post here..." oninput="livePreview();updateReadTime()"></textarea>
+      <div id="img-library" style="display:none;margin-top:12px;">
+        <div style="font-size:10px;color:var(--accent);margin-bottom:8px;">IMAGES — click to insert</div>
+        <div class="img-thumb-grid" id="img-grid"></div>
+        <div class="img-drop-zone" onclick="document.getElementById('img-picker').click()">
+          <p>Add more images</p><span>JPG PNG GIF WEBP</span>
+        </div>
+      </div>
+    </div>
+    <button class="btn-publish" id="pub-btn" onclick="publishPost()">PUBLISH TO BLOG →</button>
+  </div>
+
+  <div class="sidebar">
+    <div class="sidebar-box">
+      <div class="sidebar-label">LIVE PREVIEW</div>
+      <div id="prev-empty" class="prev-empty">Start typing...</div>
+      <div id="prev-card" style="display:none">
+        <div class="prev-meta" id="p-meta"></div>
+        <div class="prev-title" id="p-title"></div>
+        <div class="prev-excerpt" id="p-excerpt"></div>
+        <div class="prev-tags" id="p-tags"></div>
+        <div class="prev-divider"></div>
+        <div class="prev-body" id="p-body"></div>
+      </div>
+    </div>
+    <div class="sidebar-box">
+      <div class="sidebar-label">PUBLISHED</div>
+      <div id="saved-list"><div class="no-posts">No posts yet</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── State ───────────────────────────────────────────────
+let activeTags   = ['Python'];
+let publishDest  = 'blog';
+let imgStore     = [];
+try { imgStore = JSON.parse(localStorage.getItem('akashm_images') || '[]'); } catch(e){}
+
+// ─── Password ────────────────────────────────────────────
+function checkPw() {
+  const val = (document.getElementById('pw-input').value || '').trim();
+  if (val === 'akash2025') {
+    sessionStorage.setItem('akashm_auth', 'yes');
+    document.getElementById('pw-overlay').style.display = 'none';
+    renderSaved();
+    renderImgLibrary();
+  } else {
+    document.getElementById('pw-err').style.display = 'block';
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
+  }
+}
+
+// ─── Destination ─────────────────────────────────────────
+function setDest(dest) {
+  publishDest = dest;
+  document.getElementById('dest-blog').classList.toggle('active', dest === 'blog');
+  document.getElementById('dest-project').classList.toggle('active', dest === 'project');
+  document.getElementById('pub-btn').textContent = dest === 'blog' ? 'PUBLISH TO BLOG →' : 'PUBLISH TO PROJECTS →';
+  livePreview();
+}
+
+// ─── Tags ────────────────────────────────────────────────
+function toggleTag(el, tag) {
+  el.classList.toggle('on');
+  if (el.classList.contains('on')) activeTags.push(tag);
+  else activeTags = activeTags.filter(t => t !== tag);
+  livePreview();
+}
+
+// ─── Helpers ─────────────────────────────────────────────
+function countLen() {
+  const len = document.getElementById('f-excerpt').value.length;
+  const el  = document.getElementById('exc-len');
+  el.textContent = len + '/160';
+  el.style.color = len > 136 ? 'var(--amber)' : 'var(--text3)';
+}
+
+function updateReadTime() {
+  const w = document.getElementById('f-content').value.trim().split(/\s+/).filter(Boolean).length;
+  document.getElementById('read-time').textContent = Math.max(1, Math.round(w / 200)) + ' min';
+}
+
+function ins(before, after) {
+  const ta = document.getElementById('f-content');
+  const s  = ta.selectionStart, e = ta.selectionEnd;
+  const sel = ta.value.substring(s, e) || 'text';
+  ta.value = ta.value.substring(0, s) + before + sel + after + ta.value.substring(e);
+  ta.focus();
+  ta.selectionStart = s + before.length;
+  ta.selectionEnd   = s + before.length + sel.length;
+  livePreview();
+}
+
+function slugify(str) {
+  return 'u_' + str.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'').substring(0,28) + '_' + Date.now().toString(36);
+}
+
+// ─── Markdown → HTML ─────────────────────────────────────
+function mdToHtml(md) {
+  if (!md) return '';
+  return md
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/!\[([^\]]*)\]\((data:[^)]+)\)/g,'<img src="$2" alt="$1" style="max-width:100%;display:block;margin:8px 0"/>')
+    .replace(/```([\s\S]*?)```/g,'<pre>$1</pre>')
+    .replace(/^## (.+)$/gm,'<h2>$1</h2>')
+    .replace(/^### (.+)$/gm,'<h3>$1</h3>')
+    .replace(/^> (.+)$/gm,'<blockquote>$1</blockquote>')
+    .replace(/^- (.+)$/gm,'<li>$1</li>')
+    .replace(/(<li>[\s\S]*?<\/li>)/g,'<ul>$1</ul>')
+    .replace(/<\/ul>\s*<ul>/g,'')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/^---$/gm,'<hr/>')
+    .split('\n\n').map(p => {
+      if (/^(<h|<ul|<blockquote|<pre|<hr|<img)/.test(p.trim())) return p;
+      return p.trim() ? '<p>' + p.trim() + '</p>' : '';
+    }).join('');
+}
+
+// ─── Live Preview ─────────────────────────────────────────
+function livePreview() {
+  const title   = document.getElementById('f-title').value.trim();
+  const cat     = document.getElementById('f-cat').value;
+  const excerpt = document.getElementById('f-excerpt').value.trim();
+  const content = document.getElementById('f-content').value.trim();
+  const hasAny  = title || excerpt || content;
+  document.getElementById('prev-empty').style.display = hasAny ? 'none' : 'block';
+  document.getElementById('prev-card').style.display  = hasAny ? 'block' : 'none';
+  const mins = Math.max(1, Math.round((content.split(/\s+/).filter(Boolean).length || 1) / 200));
+  document.getElementById('p-meta').innerHTML      = cat + ' · ' + mins + ' min read';
+  document.getElementById('p-title').textContent   = title   || 'Your title…';
+  document.getElementById('p-excerpt').textContent = excerpt || 'Your summary…';
+  document.getElementById('p-tags').innerHTML      = activeTags.map(t => '<span class="prev-tag">' + t + '</span>').join('');
+  document.getElementById('p-body').innerHTML      = mdToHtml(content) || '<p style="color:var(--text3)">Your content…</p>';
+}
+
+// ─── Publish ──────────────────────────────────────────────
+function publishPost() {
+  const title   = document.getElementById('f-title').value.trim();
+  const cat     = document.getElementById('f-cat').value;
+  const excerpt = document.getElementById('f-excerpt').value.trim();
+  const raw     = document.getElementById('f-content').value.trim();
+  if (!title)   { showToast('Add a title', true); return; }
+  if (!excerpt) { showToast('Add a short summary', true); return; }
+  if (!raw)     { showToast('Write your content', true); return; }
+
+  const slug    = slugify(title);
+  const mins    = Math.max(1, Math.round(raw.split(/\s+/).filter(Boolean).length / 200));
+  const html    = mdToHtml(raw).replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
+  const post    = { slug, title, cat, excerpt, tags: activeTags.join(' '), mins, meta: [cat, mins+' min read'], content: html };
+  const endpoint = publishDest === 'blog' ? '/api/posts' : '/api/projects';
+
+  const btn = document.getElementById('pub-btn');
+  btn.disabled = true;
+  btn.textContent = 'Publishing...';
+
+  fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(post)
+  })
+  .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+  .then(d => {
+    if (d.ok) {
+      showToast(publishDest === 'blog' ? '✓ Published to Blog!' : '✓ Published to Projects!');
+      clearForm();
+      renderSaved();
+      setTimeout(() => { window.location.href = publishDest === 'blog' ? 'blog.html' : 'project.html'; }, 1600);
+    } else {
+      showToast('Error: ' + (d.error || 'Unknown'), true);
+    }
+  })
+  .catch(err => showToast('Failed: ' + err.message, true))
+  .finally(() => {
+    btn.disabled = false;
+    btn.textContent = publishDest === 'blog' ? 'PUBLISH TO BLOG →' : 'PUBLISH TO PROJECTS →';
+  });
+}
+
+// ─── Clear Form ───────────────────────────────────────────
+function clearForm() {
+  ['f-title','f-excerpt','f-content'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-cat').selectedIndex = 0;
+  activeTags = ['Python'];
+  document.querySelectorAll('.tag-btn').forEach(b => {
+    b.classList.remove('on');
+    if (b.textContent === 'Python') b.classList.add('on');
+  });
+  livePreview();
+  updateReadTime();
+}
+
+// ─── Render Saved Posts ───────────────────────────────────
+function renderSaved() {
+  const el = document.getElementById('saved-list');
+  el.innerHTML = '<div class="no-posts">Loading...</div>';
+  Promise.all([
+    fetch('/api/posts').then(r => r.json()).catch(() => []),
+    fetch('/api/projects').then(r => r.json()).catch(() => [])
+  ]).then(function(results) {
+    const blogs    = Array.isArray(results[0]) ? results[0] : [];
+    const projs    = Array.isArray(results[1]) ? results[1] : [];
+    const all      = blogs.map(p => Object.assign({}, p, {_t:'blog'}))
+                          .concat(projs.map(p => Object.assign({}, p, {_t:'project'})));
+    if (!all.length) { el.innerHTML = '<div class="no-posts">No posts yet</div>'; return; }
+    el.innerHTML = all.slice().reverse().map(function(p) {
+      return '<div class="saved-item">' +
+        '<div style="flex:1;min-width:0;">' +
+          '<div class="saved-title">' + p.title + '</div>' +
+          '<div style="font-size:10px;color:var(--text3)">' + (p._t === 'blog' ? 'BLOG' : 'PROJECT') + '</div>' +
+        '</div>' +
+        '<button class="del-btn" data-slug="' + p.slug + '" data-type="' + p._t + '">delete</button>' +
+      '</div>';
+    }).join('');
+    // Attach delete listeners after rendering
+    el.querySelectorAll('.del-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        deletePost(btn.dataset.slug, btn.dataset.type);
+      });
+    });
+  });
+}
+
+// ─── Delete Post ──────────────────────────────────────────
+function deletePost(slug, type) {
+  if (!confirm('Delete "' + slug + '"?')) return;
+  const endpoint = type === 'blog' ? '/api/posts' : '/api/projects';
+  fetch(endpoint, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ slug: slug })
+  })
+  .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+  .then(() => { showToast('Deleted'); renderSaved(); })
+  .catch(err => showToast('Delete failed: ' + err.message, true));
+}
+
+// ─── Image Handling ───────────────────────────────────────
+function handleImageUpload(input) {
+  Array.from(input.files).forEach(function(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = { id: 'img_' + Date.now(), name: file.name, src: e.target.result };
+      imgStore.push(img);
+      try { localStorage.setItem('akashm_images', JSON.stringify(imgStore)); renderImgLibrary(); showToast('Image added'); }
+      catch(err) { imgStore.pop(); showToast('Image too large', true); }
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
+function renderImgLibrary() {
+  const lib  = document.getElementById('img-library');
+  const grid = document.getElementById('img-grid');
+  lib.style.display = imgStore.length ? 'block' : 'none';
+  grid.innerHTML = imgStore.map(function(img) {
+    return '<div class="img-thumb">' +
+      '<img src="' + img.src + '" alt="' + img.name + '"/>' +
+      '<button class="img-thumb-btn" data-id="' + img.id + '">x</button>' +
+      '<button class="img-insert-btn" data-id="' + img.id + '">insert</button>' +
+    '</div>';
+  }).join('');
+  grid.querySelectorAll('.img-thumb-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { removeImg(btn.dataset.id); });
+  });
+  grid.querySelectorAll('.img-insert-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { insertImg(btn.dataset.id); });
+  });
+}
+
+function insertImg(id) {
+  const img = imgStore.find(i => i.id === id);
+  if (!img) return;
+  const ta  = document.getElementById('f-content');
+  const pos = ta.selectionStart;
+  ta.value  = ta.value.substring(0, pos) + '\n![' + img.name + '](' + img.src + ')\n' + ta.value.substring(pos);
+  ta.focus(); livePreview(); showToast('Image inserted');
+}
+
+function removeImg(id) {
+  if (!confirm('Remove image?')) return;
+  imgStore = imgStore.filter(i => i.id !== id);
+  try { localStorage.setItem('akashm_images', JSON.stringify(imgStore)); } catch(e){}
+  renderImgLibrary();
+}
+
+// ─── Toast ────────────────────────────────────────────────
+function showToast(msg, isErr) {
+  const el = document.getElementById('toast');
+  el.textContent  = msg;
+  el.className    = 'toast' + (isErr ? ' err' : '');
+  el.style.display = 'block';
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => { el.style.display = 'none'; }, 2800);
+}
+
+// ─── Init ─────────────────────────────────────────────────
+livePreview();
+
+// Show or hide password overlay
+if (sessionStorage.getItem('akashm_auth') === 'yes') {
+  document.getElementById('pw-overlay').style.display = 'none';
+  renderSaved();
+  renderImgLibrary();
+}
+</script>
+</body>
+</html>

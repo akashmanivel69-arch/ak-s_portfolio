@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog — Akash M</title>
+  <meta name="description"
+    content="Akash M's blog — raw notes, honest mistakes, and hard-won insights from learning data science in public." />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .blog-hero {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 110px 48px 60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .blog-label {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--green);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .blog-label::before {
+      content: '';
+      width: 32px;
+      height: 1px;
+      background: var(--green);
+    }
+
+    .blog-hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 6vw, 58px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .blog-hero-title .accent {
+      color: var(--accent);
+    }
+
+    .blog-hero-sub {
+      font-size: 13px;
+      color: var(--text2);
+      max-width: 520px;
+      line-height: 1.8;
+    }
+
+    .filter-row {
+      max-width: 900px;
+      margin: 0 auto 40px;
+      padding: 0 48px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .filter-btn {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 5px 14px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      border-color: var(--green);
+      color: var(--green);
+      background: var(--green-dim);
+    }
+
+    .posts-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 48px 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .posts-grid {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .post-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: none;
+      padding: 24px 28px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: start;
+      transition: background 0.2s, transform 0.15s;
+      cursor: pointer;
+    }
+
+    .post-card:first-of-type {
+      border-top: 1px solid var(--border);
+    }
+
+    .post-card:hover {
+      background: var(--surface2);
+      transform: translateX(3px);
+    }
+
+    .post-meta {
+      font-size: 10px;
+      color: var(--text3);
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .post-meta-dot {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--text3);
+    }
+
+    .post-title {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+      margin-bottom: 10px;
+    }
+
+    .post-excerpt {
+      font-size: 12px;
+      color: var(--text2);
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+
+    .post-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .post-tag {
+      font-size: 10px;
+      padding: 2px 8px;
+      border: 1px solid var(--border);
+      color: var(--green);
+    }
+
+    .post-read-time {
+      font-size: 11px;
+      color: var(--text3);
+      white-space: nowrap;
+      padding-top: 2px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      border: 1px dashed var(--border);
+    }
+
+    .empty-state p {
+      color: var(--text2);
+      margin-bottom: 8px;
+    }
+
+    .empty-state span {
+      color: var(--text3);
+      font-size: 12px;
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    .empty-state a {
+      font-size: 11px;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      border: 1px solid var(--border2);
+      padding: 8px 20px;
+    }
+
+    .loading-state {
+      text-align: center;
+      padding: 40px;
+      color: var(--text3);
+      font-size: 12px;
+    }
+
+    .newsletter-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 28px;
+      margin-top: 48px;
+    }
+
+    .newsletter-box h3 {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .newsletter-box p {
+      font-size: 12px;
+      color: var(--text2);
+      margin-bottom: 16px;
+    }
+
+    .newsletter-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .newsletter-input {
+      flex: 1;
+      min-width: 200px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      padding: 10px 14px;
+      outline: none;
+    }
+
+    .newsletter-input:focus {
+      border-color: var(--green);
+    }
+
+    .newsletter-input::placeholder {
+      color: var(--text3);
+    }
+
+    .newsletter-btn {
+      padding: 10px 24px;
+      background: var(--accent);
+      color: #000;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      border: none;
+      cursor: pointer;
+    }
+
+    .article-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 300;
+      overflow-y: auto;
+    }
+
+    .article-overlay.open {
+      display: block;
+    }
+
+    .article-inner {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 100px 40px 80px;
+    }
+
+    .article-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text2);
+      cursor: pointer;
+      margin-bottom: 40px;
+      letter-spacing: 0.08em;
+      background: none;
+      border: none;
+      font-family: var(--font-mono);
+      transition: color 0.2s;
+    }
+
+    .article-back:hover {
+      color: var(--accent);
+    }
+
+    .article-title {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 5vw, 42px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .article-meta {
+      font-size: 11px;
+      color: var(--text3);
+      letter-spacing: 0.1em;
+      margin-bottom: 40px;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .article-divider {
+      height: 1px;
+      background: var(--border);
+      margin-bottom: 40px;
+    }
+
+    .article-body p {
+      font-size: 15px;
+      color: var(--text2);
+      line-height: 1.9;
+      margin-bottom: 22px;
+    }
+
+    .article-body h2 {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 36px 0 14px;
+    }
+
+    .article-body h3 {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--green);
+      letter-spacing: 0.1em;
+      margin: 28px 0 10px;
+      text-transform: uppercase;
+    }
+
+    .article-body strong {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .article-body pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 20px;
+      font-size: 13px;
+      color: var(--green2);
+      line-height: 1.6;
+      overflow-x: auto;
+      margin-bottom: 22px;
+    }
+
+    .article-body blockquote {
+      border-left: 2px solid var(--accent);
+      padding: 12px 20px;
+      background: var(--surface);
+      margin: 24px 0;
+      font-size: 14px;
+      color: var(--text2);
+      font-style: italic;
+    }
+
+    .article-body ul {
+      padding-left: 20px;
+      margin-bottom: 22px;
+    }
+
+    .article-body li {
+      font-size: 14px;
+      color: var(--text2);
+      line-height: 1.8;
+      margin-bottom: 6px;
+    }
+
+    .article-body li::marker {
+      color: var(--green);
+    }
+
+    .article-body img {
+      max-width: 100%;
+      border: 1px solid var(--border);
+      margin: 16px 0;
+      display: block;
+    }
+
+    @media(max-width:680px) {
+
+      .blog-hero,
+      .filter-row,
+      .posts-wrap {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .post-card {
+        grid-template-columns: 1fr;
+      }
+
+      .post-read-time {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo"><span>&lt;</span>AKASH <span
+        style="color:#3EB489">M</span><span>/&gt;</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">home</a></li>
+      <li><a href="blog.html" class="active">blog</a></li>
+      <li><a href="project.html">projects</a></li>
+      <li><a href="write.html" style="color:var(--accent)">+ write</a></li>
+      <li><a href="index.html#skills">skills</a></li>
+      <li><a href="index.html#about">contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="blog-hero">
+    <div class="blog-label">AKASH M // BLOG</div>
+    <h1 class="blog-hero-title">Learning in<br /><span class="accent">public.</span></h1>
+    <p class="blog-hero-sub">Raw notes, honest mistakes, and hard-won insights from learning data science in public.</p>
+  </div>
+
+  <div class="filter-row" id="filter-row">
+    <button class="filter-btn active" onclick="filterPosts('all',this)">All</button>
+    <button class="filter-btn" onclick="filterPosts('python',this)">Python</button>
+    <button class="filter-btn" onclick="filterPosts('sql',this)">SQL</button>
+    <button class="filter-btn" onclick="filterPosts('ml',this)">ML</button>
+    <button class="filter-btn" onclick="filterPosts('dl',this)">DL</button>
+    <button class="filter-btn" onclick="filterPosts('ds',this)">DS</button>
+  </div>
+
+  <div class="posts-wrap">
+    <div class="posts-grid" id="posts-list">
+      <div class="loading-state" id="loading-state">Loading posts...</div>
+      <div class="empty-state" id="empty-state" style="display:none">
+        <p>No posts published yet</p>
+        <span>Your published posts will appear here</span>
+        <a href="write.html">WRITE FIRST POST →</a>
+      </div>
+    </div>
+    <div class="newsletter-box">
+      <h3>Follow along</h3>
+      <p>New post every week — honest notes from learning data science.</p>
+      <div class="newsletter-row">
+        <input class="newsletter-input" type="email" placeholder="your@email.com" />
+        <button class="newsletter-btn">SUBSCRIBE</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div>AKASH <span>M</span> · Chennai 2025</div>
+    <a href="index.html">← portfolio</a>
+  </footer>
+
+  <div class="article-overlay" id="article-overlay">
+    <div class="article-inner">
+      <button class="article-back" onclick="closeArticle()">← back to blog</button>
+      <div id="article-content"></div>
+    </div>
+  </div>
+
+  <script>
+    const articles = {};
+    let allPosts = [];
+
+    function loadPosts() {
+      fetch('/api/posts')
+        .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function (data) {
+          document.getElementById('loading-state').style.display = 'none';
+          const saved = Array.isArray(data) ? data : [];
+          allPosts = saved;
+          if (!saved.length) { document.getElementById('empty-state').style.display = 'block'; return; }
+          saved.forEach(function (p) { articles[p.slug] = p; });
+          renderCards(saved);
+        })
+        .catch(function (err) {
+          document.getElementById('loading-state').textContent = 'Could not load posts.';
+          console.error('loadPosts error:', err);
+        });
+    }
+
+    function renderCards(posts) {
+      const list = document.getElementById('posts-list');
+      list.querySelectorAll('.post-card').forEach(function (el) { el.remove(); });
+      if (!posts.length) return;
+      posts.slice().reverse().forEach(function (p) {
+        const tags = (p.tags || '').split(' ').filter(Boolean);
+        const div = document.createElement('div');
+        div.className = 'post-card fade-in';
+        div.dataset.tags = (p.tags || '').toLowerCase();
+        div.innerHTML =
+          '<div>' +
+          '<div class="post-meta"><span>' + (p.cat || '') + '</span><span class="post-meta-dot"></span><span>' + (p.mins || 1) + ' min read</span></div>' +
+          '<div class="post-title">' + p.title + '</div>' +
+          '<div class="post-excerpt">' + p.excerpt + '</div>' +
+          '<div class="post-tags">' + tags.map(function (t) { return '<span class="post-tag">' + t + '</span>'; }).join('') + '</div>' +
+          '</div>' +
+          '<div class="post-read-time">' + (p.mins || 1) + ' min</div>';
+        div.addEventListener('click', function () { openArticle(p.slug); });
+        list.appendChild(div);
+        observer.observe(div);
+      });
+    }
+
+    function filterPosts(tag, btn) {
+      document.querySelectorAll('.filter-btn').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      if (tag === 'all') { renderCards(allPosts); return; }
+      renderCards(allPosts.filter(function (p) { return (p.tags || '').toLowerCase().includes(tag); }));
+    }
+
+    function openArticle(slug) {
+      const p = articles[slug];
+      if (!p) return;
+      const metaParts = Array.isArray(p.meta) ? p.meta : [p.cat, (p.mins || 1) + ' min read'];
+      const metaHtml = metaParts.map(function (m) { return '<span>' + m + '</span>'; }).join('<span style="color:var(--text3);margin:0 6px">·</span>');
+      document.getElementById('article-content').innerHTML =
+        '<div class="article-meta">' + metaHtml + '</div>' +
+        '<h1 class="article-title">' + p.title + '</h1>' +
+        '<div class="article-divider"></div>' +
+        '<div class="article-body">' + (p.content || '') + '</div>';
+      const ov = document.getElementById('article-overlay');
+      ov.classList.add('open');
+      ov.scrollTop = 0;
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeArticle() {
+      document.getElementById('article-overlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    const observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e, i) {
+        if (e.isIntersecting) { setTimeout(function () { e.target.classList.add('visible'); }, i * 60); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.1 });
+
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeArticle(); });
+    loadPosts();
+  </script>
+
+  <script src="js/ai-widget.js"></script>
+</body>
+
+</html>
